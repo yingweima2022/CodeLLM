@@ -11,7 +11,7 @@ We release code to explore training large models with hundreds of millions of pa
 - For more information, please check the resources below：
     - [MindSpore Tutorials](https://www.mindspore.cn/tutorials/en/master/index.html)
     - [MindSpore Python API](https://www.mindspore.cn/docs/en/master/index.html)
-- You can use Qizhi platform to obtain free computing resources. [Qizhi](https://www.openi.org.cn/)
+- **You can use Qizhi(OpenI) platform to obtain free computing resources.** [OpenI](https://www.openi.org.cn/)
   
 ## Dataset Generation
 
@@ -20,7 +20,6 @@ As the format of the downstream tasks can be various, the `process_prompt2mind.p
 ```text
 {'input':'please describe your university life.', 'target':'My university life is rich and colorful. In addition to academic courses, there are also rich club activities.'}
 {'input': xxx, 'target': xxx}
-
 ```
 Suppose the text data is under the `./data` and **each text file ends with 'json'**, we can run the following command to generate the mindrecord files with seq_length=1025.
 
@@ -35,7 +34,7 @@ The output files is under `./output`.  The default tokenizer adopts the transfor
 - data_column_name: The name of feature columns for mindrecord.
 - seq_length: Default 1025. The preprocess will generate mindrecord with sequence length 1025 for each example.
 
-### Incremental Training
+### Instruction tuning
 
 Before we start Incremental Training, the following two steps must be done:
 
@@ -61,7 +60,7 @@ Please refer to the [website](https://git.openi.org.cn/PCL-Platform.Intelligence
 
 Here we suppose the downloaded checkpoint, tokenizer and strategy file is organized as follows:
 
-CodePanGu2.6B checkpoint files is coming soon.
+**CodePanGu2.6B** checkpoint files is coming soon.
 
 **Note**: In the following sections, we will refer the path as `ckpts` as `/home/your_path/ckpts`.
 
@@ -77,3 +76,56 @@ ckpts
 └── tokenizer
     └── vocab.model
 ```
+## Evaluation on Downstream Tasks
+
+This script provides the evaluation of following tasks:
+
+- [C3](https://github.com/nlpdata/c3)
+
+### Download the Dataset
+
+Click the link of above tasks and download the data. Take the C3 for example, unzip the dataset to
+`/home/my_path/data/c3`
+
+Its structure should be as followings:
+
+```text
+c3
+├── data
+│   ├── c3-d-dev.json
+│   ├── c3-d-test.json
+│   ├── c3-d-train.json
+│   ├── c3-m-dev.json
+│   ├── c3-m-test.json
+│   └── c3-m-train.json
+├── license.txt
+└── README.md
+```
+
+### Download the Checkpoint
+
+Please follow the instructions in section [Prediction](#prediction) to download the checkpoint.
+
+### Run the Evaluation
+
+The most of the arguments are same with the section [Prediction in Standalone mode](#prediction-in-standalone-mode),
+except the last argument `TASK` and `TASK_PATH`. Currently, we support only `c3` task. The following commands will
+launch the programs to start evaluation with 2.6B model.
+
+```bash
+export FILE_PATH=/home/your_path/ckpts
+export DEVICE_TARGET=Ascend # or GPU
+export TASK=c3
+export TASK_PATH=/home/your_c3_data_path/data # You should point to the data directory under the c3 path
+bash scripts/run_standalone_eval.sh ${FILE_PATH}/strategy_load_ckpt/strategy.ckpt \
+${FILE_PATH}/tokenizer/  ${FILE_PATH}/checkpoint_file filitered 2.6B $DEVICE_TARGET $TASK $TASK_PATH
+```
+
+For the model with 2.6B, it takes about 13 minutes to get the results. Log can be found under the `device0/log0.log`.
+It should look like this:
+
+```text
+Metric for dataset c3 is {'top1_acc': 0.5430}
+```
+Naturally, you should also cite the [OpenI repo]([https://openi.pcl.ac.cn/PCL-Platform.Intelligence/PanGu-Alpha.git]) and [MindSpore repo]([https://github.com/tatsu-lab/stanford_alpaca](https://gitee.com/mindspore/models.git)https://gitee.com/mindspore/models.git).
+
