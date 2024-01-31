@@ -74,7 +74,7 @@ Please refer to the [website](https://git.openi.org.cn/PCL-Platform.Intelligence
 
 Here we suppose the downloaded checkpoint, tokenizer and strategy file is organized as follows:
 
-**CodePanGu2.6B** checkpoint files is coming soon.
+**CodePanGu2.6B**: https://pan.baidu.com/s/1K5WpQMkngowEcQGoxUhoUA?pwd=pap9 
 
 **Note**: In the following sections, we will refer the path as `ckpts` as `/home/your_path/ckpts`.
 
